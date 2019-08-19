@@ -14,6 +14,25 @@ router.get('/json', (req, res, next)=>{
   }
 });
 
+router.get('/profile', (req, res) => {
+  const username = req.session.username;
+  if (username) {
+    User.find({'username': username}, {'_id': false, 'password': false})
+        .then((details) => {
+          return details[0];
+        })
+        .then((details) => {
+          res.render('profile', {user: details});
+        })
+        .catch((err) => {
+          console.log(err);
+          return err;
+        });
+  } else {
+    res.render('login', {error: 'You must login to edit your profile'});
+  }
+});
+
 router.delete('/:username', (req, res, next) => {
   const {username} = req.params;
   if (!req.session.username) {
@@ -83,6 +102,17 @@ router.post('/create', (req, res) => {
   if (errors.length) {
     res.send({errors: errors});
   }
+});
+
+router.post('/update', (req, res, next) => {
+  // Fixing the request body to fit the next update method.
+  if (!req.body.update) {
+    req.body = {
+      'username': req.session.username,
+      'update': req.body,
+    };
+  }
+  next();
 });
 
 router.post('/update', (req, res) => {

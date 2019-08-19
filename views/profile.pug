@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-sm-5
+        h2 #{user['name']}'s Profile
+        
+        if error
+          .alert.alert-warning.alert-dismissible.fade.show(role='alert')
+            strong #{error}
+            button.close(type='button' data-dismiss='alert' aria-label='Close')
+              span(aria-hidden='true') &times;
+
+        form.sign-form.mx-auto(action="/users/update", method="post")
+          .form-group
+            label(name='name') Name
+            input#new-name.form-control(type="text", name='name', value=user['name'])
+          .form-group
+            label(name='username') Username
+            input#new-username.form-control(type="text", name='username', value=user['username'])
+          .form-group
+            label(name='password') Password
+            input#new-password.form-control(type="password", name='password')
+          .form-group
+            label(name='password2') Confirm password
+            input#new-password2.form-control(type="password", name='password2')
+          button.btn.btn-primary(type="submit") Confirm
+        br
+        ul.nav.nav-pills.flex-row
+          li.nav-item
+            a.nav-link(href='/login') Wanna switch user?
+        hr.d-sm-none
